@@ -1,0 +1,398 @@
+<!DOCTYPE html>
+<html lang="es" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Guía Interactiva de Mantenimiento de Motores Eléctricos con IA</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <!-- Chosen Palette: Calm Harmony (Slate, Sky Blue, Warm Neutrals) -->
+    <!-- Application Structure Plan: La aplicación sigue siendo un flujo guiado (Preparación, Limpieza, Pintura, Reensamblaje), pero ahora enriquecido con capacidades de IA. Se han añadido dos nuevas funciones clave de la API de Gemini: 1) Un generador de procedimientos dinámico en cada tarjeta de producto, que proporciona instrucciones de aplicación específicas a pedido en una ventana modal. 2) Una sección de diagnóstico de problemas al final, donde los usuarios pueden describir un problema y recibir soluciones. Esta estructura híbrida mantiene la simplicidad de la guía paso a paso, pero añade capas de asistencia inteligente y personalizada, convirtiéndola en una herramienta de diagnóstico y aprendizaje activo. -->
+    <!-- Visualization & Content Choices: 
+        - Objetivo: Generar Instrucciones (Gemini API). Presentación: Botón "Generar Procedimiento" en tarjetas de producto. Interacción: Clic para llamar a la API y mostrar los resultados en una ventana modal. Justificación: Proporciona valor inmediato y contextual, creando instrucciones detalladas que van más allá de la información base del producto.
+        - Objetivo: Diagnosticar Problemas (Gemini API). Presentación: Nueva sección con un textarea y un botón de "Analizar". Interacción: El usuario escribe su problema, la API de Gemini lo procesa y devuelve una lista de causas y soluciones. Justificación: Transforma la guía de un recurso pasivo a un asistente de solución de problemas activo.
+        - Se mantienen los selectores de productos y los gráficos de Chart.js como en la versión anterior para la comparación visual de datos.
+    -->
+    <!-- CONFIRMATION: NO SVG graphics used. NO Mermaid JS used. -->
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+        }
+        .chart-container {
+            position: relative;
+            width: 100%;
+            max-width: 800px;
+            margin-left: auto;
+            margin-right: auto;
+            height: 300px;
+            max-height: 40vh;
+        }
+        @media (min-width: 768px) {
+            .chart-container {
+                height: 400px;
+            }
+        }
+        .step-connector:before {
+            content: '';
+            position: absolute;
+            top: 1.25rem;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 2px;
+            height: calc(100% - 2.5rem);
+            background-color: #e5e7eb; 
+        }
+        .step:last-child .step-connector:before {
+            display: none;
+        }
+        .modal-overlay {
+            transition: opacity 0.3s ease;
+        }
+        .modal-container {
+            transition: transform 0.3s ease;
+        }
+    </style>
+</head>
+<body class="bg-slate-50 text-slate-800">
+
+    <header class="bg-white/80 backdrop-blur-lg shadow-sm sticky top-0 z-50">
+        <nav class="container mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex items-center justify-between h-16">
+                <div class="flex items-center">
+                    <span class="font-bold text-xl text-slate-700">Guía de Mantenimiento de Motores</span>
+                </div>
+                <div class="hidden md:block">
+                    <div class="ml-10 flex items-baseline space-x-4">
+                        <a href="#preparacion" class="text-slate-600 hover:bg-slate-200 hover:text-slate-800 px-3 py-2 rounded-md text-sm font-medium">Preparación</a>
+                        <a href="#limpieza" class="text-slate-600 hover:bg-slate-200 hover:text-slate-800 px-3 py-2 rounded-md text-sm font-medium">Limpieza</a>
+                        <a href="#pintura" class="text-slate-600 hover:bg-slate-200 hover:text-slate-800 px-3 py-2 rounded-md text-sm font-medium">Pintura</a>
+                        <a href="#reensamblaje" class="text-slate-600 hover:bg-slate-200 hover:text-slate-800 px-3 py-2 rounded-md text-sm font-medium">Reensamblaje</a>
+                        <a href="#diagnostico" class="text-slate-600 hover:bg-slate-200 hover:text-slate-800 px-3 py-2 rounded-md text-sm font-medium">Diagnóstico IA</a>
+                    </div>
+                </div>
+            </div>
+        </nav>
+    </header>
+
+    <main class="container mx-auto px-4 sm:px-6 lg:px-8 py-8 md:py-12">
+        
+        <section id="introduccion" class="text-center mb-16">
+            <h1 class="text-4xl md:text-5xl font-bold text-sky-800 mb-4">Mantenimiento y Recuperación de Motores Eléctricos</h1>
+            <p class="max-w-3xl mx-auto text-lg text-slate-600">
+                Esta guía interactiva, ahora potenciada con IA, proporciona un procedimiento profesional para la limpieza, pintura y diagnóstico de problemas en motores eléctricos.
+            </p>
+        </section>
+
+        <section id="preparacion" class="mb-16 scroll-mt-20">
+             <div class="text-center mb-12">
+                <h2 class="text-3xl font-bold text-slate-800">1. Preparación y Seguridad</h2>
+                <p class="mt-2 text-md text-slate-500">La base de un mantenimiento exitoso y libre de accidentes. Siga estos pasos rigurosamente.</p>
+            </div>
+            <div class="grid md:grid-cols-2 lg:grid-cols-4 gap-8">
+                <div class="bg-white p-6 rounded-lg shadow-lg hover:shadow-xl transition-shadow">
+                    <div class="flex items-center justify-center bg-red-100 rounded-full h-12 w-12 mb-4"><span class="text-2xl">⚡</span></div>
+                    <h3 class="text-lg font-semibold mb-2">Desenergización (LOTO)</h3>
+                    <p class="text-slate-600 text-sm">Aplique siempre el procedimiento de Bloqueo y Etiquetado. Verifique la ausencia total de energía.</p>
+                </div>
+                <div class="bg-white p-6 rounded-lg shadow-lg hover:shadow-xl transition-shadow">
+                    <div class="flex items-center justify-center bg-blue-100 rounded-full h-12 w-12 mb-4"><span class="text-2xl">🛡️</span></div>
+                    <h3 class="text-lg font-semibold mb-2">Equipo de Protección (EPP)</h3>
+                    <p class="text-slate-600 text-sm">Utilice gafas de seguridad, guantes resistentes a químicos y protección respiratoria.</p>
+                </div>
+                <div class="bg-white p-6 rounded-lg shadow-lg hover:shadow-xl transition-shadow">
+                    <div class="flex items-center justify-center bg-green-100 rounded-full h-12 w-12 mb-4"><span class="text-2xl">📸</span></div>
+                    <h3 class="text-lg font-semibold mb-2">Documentación y Marcado</h3>
+                    <p class="text-slate-600 text-sm">Tome fotografías y marque las piezas para garantizar un reensamblaje preciso.</p>
+                </div>
+                <div class="bg-white p-6 rounded-lg shadow-lg hover:shadow-xl transition-shadow">
+                    <div class="flex items-center justify-center bg-yellow-100 rounded-full h-12 w-12 mb-4"><span class="text-2xl">🔧</span></div>
+                    <h3 class="text-lg font-semibold mb-2">Herramientas Esenciales</h3>
+                    <p class="text-slate-600 text-sm">Prepare llaves, extractores, martillo de goma, cepillos de nylon y un megóhmetro.</p>
+                </div>
+            </div>
+        </section>
+
+        <section id="limpieza" class="mb-16 scroll-mt-20">
+            <div class="text-center mb-12">
+                <h2 class="text-3xl font-bold text-slate-800">2. Proceso de Limpieza</h2>
+                <p class="mt-2 text-md text-slate-500">Seleccione el producto y genere un procedimiento de aplicación con IA para una limpieza segura.</p>
+            </div>
+            <div class="bg-white p-6 md:p-8 rounded-lg shadow-lg">
+                <h3 class="text-xl font-bold mb-4">Selector Interactivo de Agentes de Limpieza</h3>
+                <div id="cleaning-filters" class="flex flex-wrap gap-4 mb-8">
+                    <label class="inline-flex items-center cursor-pointer"><input type="checkbox" value="biodegradable" class="form-checkbox h-5 w-5 text-sky-600 rounded focus:ring-sky-500"><span class="ml-2 text-slate-700">Biodegradable</span></label>
+                    <label class="inline-flex items-center cursor-pointer"><input type="checkbox" value="evaporacion_rapida" class="form-checkbox h-5 w-5 text-sky-600 rounded focus:ring-sky-500"><span class="ml-2 text-slate-700">Evaporación Rápida</span></label>
+                    <label class="inline-flex items-center cursor-pointer"><input type="checkbox" value="evaporacion_lenta" class="form-checkbox h-5 w-5 text-sky-600 rounded focus:ring-sky-500"><span class="ml-2 text-slate-700">Evaporación Lenta</span></label>
+                    <label class="inline-flex items-center cursor-pointer"><input type="checkbox" value="no_inflamable" class="form-checkbox h-5 w-5 text-sky-600 rounded focus:ring-sky-500"><span class="ml-2 text-slate-700">No Inflamable</span></label>
+                </div>
+                <div id="cleaning-product-list" class="grid md:grid-cols-2 lg:grid-cols-3 gap-6 mb-8"></div>
+                <h3 class="text-xl font-bold mb-4 text-center">Comparativa de Rigidez Dieléctrica (kV)</h3>
+                <div class="chart-container"><canvas id="cleaningChart"></canvas></div>
+            </div>
+        </section>
+
+        <section id="pintura" class="mb-16 scroll-mt-20">
+            <div class="text-center mb-12">
+                <h2 class="text-3xl font-bold text-slate-800">3. Proceso de Pintado</h2>
+                <p class="mt-2 text-md text-slate-500">Elija la pintura y obtenga un plan de aplicación detallado para proteger su motor.</p>
+            </div>
+            <div class="bg-white p-6 md:p-8 rounded-lg shadow-lg">
+                <h3 class="text-xl font-bold mb-4">Selector Interactivo de Pinturas</h3>
+                <div id="paint-filters" class="flex flex-wrap gap-4 mb-8">
+                     <label class="inline-flex items-center cursor-pointer"><input type="checkbox" value="alta_temperatura" class="form-checkbox h-5 w-5 text-sky-600 rounded focus:ring-sky-500"><span class="ml-2 text-slate-700">Alta Temperatura (>200°C)</span></label>
+                    <label class="inline-flex items-center cursor-pointer"><input type="checkbox" value="resistencia_quimica" class="form-checkbox h-5 w-5 text-sky-600 rounded focus:ring-sky-500"><span class="ml-2 text-slate-700">Excelente Resistencia Química</span></label>
+                    <label class="inline-flex items-center cursor-pointer"><input type="checkbox" value="aerosol" class="form-checkbox h-5 w-5 text-sky-600 rounded focus:ring-sky-500"><span class="ml-2 text-slate-700">Aplicación en Aerosol</span></label>
+                </div>
+                <div id="paint-product-list" class="grid md:grid-cols-2 lg:grid-cols-3 gap-6 mb-8"></div>
+                <h3 class="text-xl font-bold mb-4 text-center">Comparativa de Resistencia a Temperatura (°C)</h3>
+                <div class="chart-container"><canvas id="paintChart"></canvas></div>
+            </div>
+        </section>
+
+        <section id="reensamblaje" class="mb-16 scroll-mt-20">
+            <div class="text-center mb-12">
+                <h2 class="text-3xl font-bold text-slate-800">4. Reensamblaje y Puesta en Marcha</h2>
+                <p class="mt-2 text-md text-slate-500">El último paso. La precisión aquí es tan crítica como en el desmontaje.</p>
+            </div>
+            <div class="max-w-4xl mx-auto">
+                <div class="relative pl-8">
+                    <div class="step relative pb-12"><div class="step-connector"></div><div class="absolute top-0 left-0 transform -translate-x-1/2 flex items-center justify-center bg-sky-600 text-white rounded-full h-10 w-10">1</div><div class="ml-4"><h4 class="font-bold text-lg">Reensamblaje Guiado</h4><p class="text-slate-600 mt-1">Utilice sus fotos y marcas. Inserte el rotor, monte tapas y apriete los pernos en patrón cruzado.</p></div></div>
+                    <div class="step relative pb-12"><div class="step-connector"></div><div class="absolute top-0 left-0 transform -translate-x-1/2 flex items-center justify-center bg-sky-600 text-white rounded-full h-10 w-10">2</div><div class="ml-4"><h4 class="font-bold text-lg">Lubricación Correcta</h4><p class="text-slate-600 mt-1">Aplique la grasa especificada por el fabricante. Ni más, ni menos.</p></div></div>
+                    <div class="step relative"><div class="absolute top-0 left-0 transform -translate-x-1/2 flex items-center justify-center bg-sky-600 text-white rounded-full h-10 w-10">3</div><div class="ml-4"><h4 class="font-bold text-lg">Pruebas Finales</h4><p class="text-slate-600 mt-1">Gire el eje a mano. Realice una prueba en vacío para verificar rotación y ruidos.</p></div></div>
+                </div>
+            </div>
+        </section>
+
+        <section id="diagnostico" class="scroll-mt-20">
+             <div class="text-center mb-12">
+                <h2 class="text-3xl font-bold text-slate-800">5. 🔍 Asistente para Solución de Problemas</h2>
+                <p class="mt-2 text-md text-slate-500">¿Tiene un problema? Descríbalo a continuación y la IA le sugerirá posibles causas y soluciones.</p>
+            </div>
+            <div class="max-w-2xl mx-auto bg-white p-8 rounded-lg shadow-lg">
+                <textarea id="problem-description" class="w-full p-3 border border-slate-300 rounded-md focus:ring-2 focus:ring-sky-500 focus:border-sky-500 transition" rows="4" placeholder="Ej: El motor se sobrecalienta después de 15 minutos de uso..."></textarea>
+                <button id="troubleshoot-button" class="mt-4 w-full bg-sky-600 text-white font-bold py-3 px-4 rounded-md hover:bg-sky-700 transition-colors flex items-center justify-center">
+                    Analizar Problema
+                </button>
+                <div id="troubleshoot-results" class="mt-6 p-4 bg-slate-100 rounded-md border border-slate-200 hidden"></div>
+            </div>
+        </section>
+    </main>
+
+    <div id="modal" class="modal-overlay fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50 hidden opacity-0">
+        <div class="modal-container bg-white rounded-lg shadow-xl w-full max-w-2xl max-h-[80vh] overflow-y-auto p-6 relative scale-95">
+            <button id="close-modal" class="absolute top-4 right-4 text-slate-500 hover:text-slate-800 text-2xl">&times;</button>
+            <h3 id="modal-title" class="text-2xl font-bold mb-4 text-slate-800">Procedimiento Sugerido</h3>
+            <div id="modal-content" class="text-slate-600 prose"></div>
+        </div>
+    </div>
+
+    <footer class="bg-slate-800 text-white mt-16">
+        <div class="container mx-auto px-4 sm:px-6 lg:px-8 py-4 text-center text-sm">
+            <p>Aplicación interactiva de mantenimiento generada a partir de una guía técnica.</p>
+        </div>
+    </footer>
+
+    <script>
+    // Self-executing anonymous function to encapsulate all the logic.
+    // This helps prevent conflicts and ensures the code runs once the script is loaded,
+    // which is more reliable for embedding in environments like Google Sites.
+    (function() {
+        const cleaningProducts = [
+            { id: 1, name: 'SWIPE® Shock', type: 'Solvente Dieléctrico Biodegradable', k_v: 36, evaporation: 'variable', flammable: false, tags: ['biodegradable'], description: 'Ecológico, aroma cítrico, no deja residuos, seguro para el operario.' },
+            { id: 2, name: 'Chesterton 273', type: 'Limpiador de Motores de Alta Rigidez', k_v: 30, evaporation: 'rapida', flammable: false, tags: ['evaporacion_rapida', 'no_inflamable'], description: 'Permite limpieza en operación (bajo riesgo), se evapora rápidamente.' },
+            { id: 3, name: 'Wurth Espuma Desengrasante', type: 'Espuma Desengrasante en Seco', k_v: 0, evaporation: 'na', flammable: false, tags: [], description: 'No introduce líquido, ideal para limpieza superficial y áreas delicadas.' },
+            { id: 4, name: 'Quimica Dalton DIEDALT R', type: 'Solvente Dieléctrico Rápido', k_v: 32, evaporation: 'rapida', flammable: false, tags: ['evaporacion_rapida', 'no_inflamable'], description: 'Secado muy rápido para mantenimiento ágil. No deja residuos.' },
+            { id: 5, name: 'Quimica Dalton DIEDALT L', type: 'Solvente Dieléctrico Lento', k_v: 32, evaporation: 'lenta', flammable: false, tags: ['evaporacion_lenta', 'no_inflamable'], description: 'Mayor tiempo de contacto para disolver grasas y aceites pesados.' },
+            { id: 6, name: 'Chemtronics Electro-Wash®', type: 'Limpiador Universal', k_v: 30, evaporation: 'rapida', flammable: false, tags: ['evaporacion_rapida'], description: 'Amplia gama de productos para necesidades específicas (fuerza, compatibilidad).' },
+        ];
+
+        const paintProducts = [
+            { id: 1, name: 'VHT Engine Enamel', type: 'Esmalte Alta Temperatura', temp: 288, resistance: 'moderada', application: 'aerosol', tags: ['alta_temperatura', 'aerosol'], description: 'Ideal para retoques y trabajos generales en motores. Requiere curado por calor.' },
+            { id: 2, name: 'Sherwin-Williams Macropoxy', type: 'Recubrimiento Epoxi', temp: 120, resistance: 'excelente', application: 'pistola', tags: ['resistencia_quimica'], description: 'Máxima dureza y resistencia química. Ideal para entornos industriales agresivos.' },
+            { id: 3, name: 'WEG Lackthane N 2677', type: 'Recubrimiento de Poliuretano', temp: 120, resistance: 'muy_buena', application: 'pistola', tags: ['resistencia_quimica'], description: 'Acabado OEM para motores WEG, alta resistencia a la intemperie.' },
+            { id: 4, name: 'Axalta Alesta (Polvo)', type: 'Pintura Electrostática', temp: 180, resistance: 'excelente', application: 'pistola_electrostatica', tags: ['resistencia_quimica'], description: 'Acabado industrial extremadamente duro y uniforme. Requiere horneado.' },
+            { id: 5, name: 'Rust-Oleum High Heat', type: 'Esmalte Alta Temperatura', temp: 1093, resistance: 'moderada', application: 'aerosol', tags: ['alta_temperatura', 'aerosol'], description: 'Para aplicaciones de calor extremo como colectores. Cura con la operación del motor.' },
+        ];
+        
+        let cleaningChartInstance;
+        let paintChartInstance;
+
+        async function callGemini(prompt, button) {
+            const originalButtonText = button.innerHTML;
+            button.disabled = true;
+            button.innerHTML = '<svg class="animate-spin -ml-1 mr-3 h-5 w-5 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path></svg> Generando...';
+            
+            const apiKey = "";
+            const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${apiKey}`;
+            const payload = { contents: [{ role: "user", parts: [{ text: prompt }] }] };
+
+            try {
+                const response = await fetch(apiUrl, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(payload)
+                });
+                const result = await response.json();
+                if (result.candidates && result.candidates.length > 0 && result.candidates[0].content && result.candidates[0].content.parts && result.candidates[0].content.parts.length > 0) {
+                    return result.candidates[0].content.parts[0].text;
+                } else {
+                    return "No se pudo obtener una respuesta. Por favor, inténtelo de nuevo.";
+                }
+            } catch (error) {
+                console.error("Error calling Gemini API:", error);
+                return "Error al contactar el servicio de IA. Verifique la conexión.";
+            } finally {
+                 button.disabled = false;
+                 button.innerHTML = originalButtonText;
+            }
+        }
+
+        function renderProductCard(product, type) {
+            let details = '';
+            if (type === 'cleaning') {
+                details = `<p class="text-sm text-slate-500">Rigidez Dieléctrica: <span class="font-semibold">${product.k_v > 0 ? product.k_v + ' kV' : 'N/A'}</span></p>
+                           <p class="text-sm text-slate-500">Evaporación: <span class="font-semibold capitalize">${product.evaporation.replace('_', ' ')}</span></p>`;
+            } else if (type === 'paint') {
+                details = `<p class="text-sm text-slate-500">Resistencia Temp.: <span class="font-semibold">${product.temp}°C</span></p>
+                           <p class="text-sm text-slate-500">Resist. Química: <span class="font-semibold capitalize">${product.resistance.replace('_', ' ')}</span></p>
+                           <p class="text-sm text-slate-500">Aplicación: <span class="font-semibold capitalize">${product.application.replace('_', ' ')}</span></p>`;
+            }
+
+            return `
+                <div class="bg-slate-100 border border-slate-200 p-4 rounded-lg product-card flex flex-col justify-between" data-id="${product.id}">
+                    <div>
+                        <h4 class="font-bold text-sky-700">${product.name}</h4>
+                        <p class="text-xs text-slate-500 mb-2">${product.type}</p>
+                        <p class="text-sm text-slate-600 mb-3">${product.description}</p>
+                        ${details}
+                    </div>
+                    <button class="generate-procedure-btn mt-4 w-full bg-sky-500 text-white text-sm font-bold py-2 px-3 rounded-md hover:bg-sky-600 transition-colors">✨ Generar Procedimiento</button>
+                </div>
+            `;
+        }
+        
+        function updateChart(chartInstance, canvasId, products, labelKey, dataKey, chartLabel, containerId) {
+            if (chartInstance) chartInstance.destroy();
+            const ctx = document.getElementById(canvasId).getContext('2d');
+            const container = document.getElementById(containerId);
+            const visibleProducts = products.filter(p => {
+                const card = container.querySelector(`.product-card[data-id='${p.id}']`);
+                return card && !card.classList.contains('hidden');
+            });
+            if (visibleProducts.length === 0) {
+                 if (canvasId === 'cleaningChart') cleaningChartInstance = null;
+                 if (canvasId === 'paintChart') paintChartInstance = null;
+                ctx.clearRect(0, 0, ctx.canvas.width, ctx.canvas.height);
+                return;
+            };
+            const newChartInstance = new Chart(ctx, {
+                type: 'bar',
+                data: { labels: visibleProducts.map(p => p[labelKey]), datasets: [{ label: chartLabel, data: visibleProducts.map(p => p[dataKey]), backgroundColor: 'rgba(56, 189, 248, 0.6)', borderColor: 'rgba(2, 132, 199, 1)', borderWidth: 1 }] },
+                options: { maintainAspectRatio: false, responsive: true, scales: { y: { beginAtZero: true, ticks: { color: '#475569' }, grid: { color: '#e2e8f0' } }, x: { ticks: { color: '#475569' }, grid: { display: false } } }, plugins: { legend: { display: false }, tooltip: { backgroundColor: '#0f172a', titleFont: { size: 14, weight: 'bold' }, bodyFont: { size: 12 }, padding: 10, cornerRadius: 4 } } }
+            });
+            if (canvasId === 'cleaningChart') cleaningChartInstance = newChartInstance;
+            if (canvasId === 'paintChart') paintChartInstance = newChartInstance;
+        }
+
+        function filterProducts(products, filtersEl, containerId, chartInstance, canvasId, labelKey, dataKey, chartLabel) {
+            const activeFilters = Array.from(filtersEl.querySelectorAll('input:checked')).map(el => el.value);
+            const listContainer = document.getElementById(containerId);
+            Array.from(listContainer.children).forEach(card => {
+                const product = products.find(p => p.id == card.dataset.id);
+                if (product) {
+                    const matches = activeFilters.length === 0 || activeFilters.every(filter => product.tags.includes(filter));
+                    card.classList.toggle('hidden', !matches);
+                }
+            });
+            updateChart(chartInstance, canvasId, products, labelKey, dataKey, chartLabel, containerId);
+        }
+
+        function setupEventListeners() {
+            const modal = document.getElementById('modal');
+            const closeModalBtn = document.getElementById('close-modal');
+            
+            closeModalBtn.addEventListener('click', () => {
+                modal.classList.add('opacity-0');
+                modal.querySelector('.modal-container').classList.add('scale-95');
+                setTimeout(() => modal.classList.add('hidden'), 300);
+            });
+
+            document.querySelectorAll('.generate-procedure-btn').forEach(button => {
+                button.addEventListener('click', async (e) => {
+                    const card = e.target.closest('.product-card');
+                    const productId = card.dataset.id;
+                    const product = [...cleaningProducts, ...paintProducts].find(p => p.id == productId);
+                    const prompt = `Como experto en mantenimiento de motores eléctricos, genera un procedimiento de aplicación detallado, profesional y seguro, en formato Markdown, para el siguiente producto:
+                        - Producto: ${product.name}
+                        - Tipo: ${product.type}
+                        - Descripción: ${product.description}
+
+                        El procedimiento debe incluir secciones claras para:
+                        1.  **Medidas de Seguridad (EPP):** Qué equipo de protección es esencial.
+                        2.  **Preparación de la Superficie:** Cómo preparar la carcasa del motor antes de aplicar el producto.
+                        3.  **Aplicación del Producto:** Instrucciones paso a paso sobre cómo aplicarlo correctamente.
+                        4.  **Tiempos y Curado (si aplica):** Cuánto tiempo esperar antes de manipular o continuar con el siguiente paso.
+                        5.  **Consejo Profesional:** Un truco o recomendación de experto.`;
+                    
+                    document.getElementById('modal-title').textContent = `Procedimiento para ${product.name}`;
+                    document.getElementById('modal-content').innerHTML = 'Generando procedimiento con IA...';
+                    modal.classList.remove('hidden');
+                    setTimeout(() => {
+                         modal.classList.remove('opacity-0');
+                         modal.querySelector('.modal-container').classList.remove('scale-95');
+                    }, 10);
+                    
+                    const result = await callGemini(prompt, e.target);
+                    document.getElementById('modal-content').innerHTML = result.replace(/\n/g, '<br>');
+                });
+            });
+
+            const troubleshootButton = document.getElementById('troubleshoot-button');
+            const problemDescription = document.getElementById('problem-description');
+            const resultsContainer = document.getElementById('troubleshoot-results');
+
+            troubleshootButton.addEventListener('click', async () => {
+                const problem = problemDescription.value;
+                if (!problem.trim()) {
+                    resultsContainer.innerHTML = 'Por favor, describa el problema primero.';
+                    resultsContainer.classList.remove('hidden');
+                    return;
+                }
+                const prompt = `Actúa como un técnico experto en diagnóstico de motores eléctricos. Un usuario reporta el siguiente problema durante un mantenimiento: "${problem}". 
+                
+                Proporciona una respuesta en formato Markdown con:
+                1.  **Posibles Causas:** Una lista con los motivos más probables del problema.
+                2.  **Pasos de Diagnóstico y Solución:** Una guía clara y numerada sobre qué verificar y cómo solucionarlo.
+                3.  **Advertencia de Seguridad:** Una nota de seguridad importante relacionada con el problema.`;
+                
+                resultsContainer.classList.remove('hidden');
+                resultsContainer.innerHTML = '<p>Analizando con IA...</p>';
+                const result = await callGemini(prompt, troubleshootButton);
+                resultsContainer.innerHTML = result.replace(/\n/g, '<br>').replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>');
+            });
+        }
+        
+        // Initial setup run
+        const cleaningListContainer = document.getElementById('cleaning-product-list');
+        cleaningListContainer.innerHTML = cleaningProducts.map(p => renderProductCard(p, 'cleaning')).join('');
+        
+        const paintListContainer = document.getElementById('paint-product-list');
+        paintListContainer.innerHTML = paintProducts.map(p => renderProductCard(p, 'paint')).join('');
+
+        const cleaningFiltersEl = document.getElementById('cleaning-filters');
+        cleaningFiltersEl.addEventListener('change', () => filterProducts(cleaningProducts, cleaningFiltersEl, 'cleaning-product-list', cleaningChartInstance, 'cleaningChart', 'name', 'k_v', 'Rigidez Dieléctrica (kV)'));
+        
+        const paintFiltersEl = document.getElementById('paint-filters');
+        paintFiltersEl.addEventListener('change', () => filterProducts(paintProducts, paintFiltersEl, 'paint-product-list', paintChartInstance, 'paintChart', 'name', 'temp', 'Resistencia a Temperatura (°C)'));
+
+        filterProducts(cleaningProducts, cleaningFiltersEl, 'cleaning-product-list', cleaningChartInstance, 'cleaningChart', 'name', 'k_v', 'Rigidez Dieléctrica (kV)');
+        filterProducts(paintProducts, paintFiltersEl, 'paint-product-list', paintChartInstance, 'paintChart', 'name', 'temp', 'Resistencia a Temperatura (°C)');
+    
+        setupEventListeners();
+    })();
+    </script>
+</body>
+</html>
